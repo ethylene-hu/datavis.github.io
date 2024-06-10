@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ECHARTS</title>
+    <style>
+        #main{
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div id="main"></div>
+
+    <script src="echarts.js"></script>
+    <script>
+        var chardom = document.getElementById('main')
+        var mychart = echarts.init(chardom)
+        var option;
+        option = {
+            title: {
+                text: 'Average Rating'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['1291561', '1291852', '1291863', '1292052', '1292212']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019'],
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '1291561',
+                    type: 'line',
+                    data: [4.60, 4.00, 4.22, 4.40, 4.20, 5.00, 4.53, 4.38, 4.51, 4.64]
+                },
+                {
+                    name: '1291852',
+                    type: 'line',
+                    data: [4.50, 4.46, 4.15, 3.88, 4.40, 4.20, 4.00, 4.00, 4.30, 4.43]
+                },
+                {
+                    name: '1291863',
+                    type: 'line',
+                    data: [3.81, 3.78, 3.82, 3.87, 4.04, 3.50, 4.00, 3.79, 4.00, 4.18]
+                },
+                {
+                    name: '1292052',
+                    type: 'line',
+                    data: [4.56, 3.00, 5.00, 4.75, 2.75, 4.33, 4.91, 4.75, 4.69, 4.76]
+                },
+                {
+                    name: '1292212',
+                    type: 'line',
+                    data: [3.81, 3.80, 3.84, 3.67, 2.67, 4.00, 3.00, 3.85, 3.00, 3.91]
+                }
+            ]
+        };
+        option&&mychart.setOption(option)
+
+
+    </script>
+</body>
+</html>
