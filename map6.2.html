@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body style="height: 100%; margin: 0">
+    <div id="main" style="height: 100%"></div>
+    <div id="tooltipPie" style="width: 400px; height: 400px; display: none; position: absolute;"></div>
+    <script type="text/javascript">
+        // 基础饼图数据
+        var mainPieData = [
+            {value:2988, name:'0~5分'},
+            {value:11670, name:'5~7分'},
+            {value:10979, name:'7~9分'},
+            {value:331, name:'9~10分'},
+        ];
+
+        // 另一个饼图数据
+        var subPieData = {
+            '0~5分': [
+                {value: 951, name: '剧情'},
+                {value: 1515, name: '喜剧'},
+                {value: 2060, name: '爱情'},
+                {value: 2749, name: '动作'},
+                {value: 3538, name: '惊悚'}
+            ],
+            '5~7分': [
+                {value: 6100, name: '剧情'},
+                {value: 9171, name: '喜剧'},
+                {value: 11373, name: '爱情'},
+                {value: 13511, name: '动作'},
+                {value: 15754, name: '惊悚'}
+            ],
+            '7~9分': [
+                {value: 7477, name: '剧情'},
+                {value: 10186, name: '喜剧'},
+                {value: 12362, name: '爱情'},
+                {value: 13503, name: '动作'},
+                {value: 14582, name: '惊悚'}
+            ],
+            '9~10分': [
+                {value: 129, name: '剧情'},
+                {value: 203, name: '喜剧'},
+                {value: 235, name: '爱情'},
+                {value: 244, name: '动作'},
+                {value: 251, name: '惊悚'}
+            ]
+        };
+
+        var myChart = echarts.init(document.getElementById('main'));
+        var tooltipPie = echarts.init(document.getElementById('tooltipPie'));
+
+        var option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: function(params) {
+                    // 根据悬停的扇区显示对应的饼图
+                    var subData = subPieData[params.name];
+                    if (subData) {
+                        tooltipPie.setOption({
+                            label:{
+                                nomal:{
+                                    show:true,
+                                    position:'inner',
+                                }
+                            },
+                            emphasis:{
+                                show:true
+                            },
+                            series: [{
+                                type: 'pie',
+                                radius: '50%',
+                                data: subData
+                            }]
+                        });
+                    }
+                    return params.name + ': ' + params.value;
+                }
+            },
+            series: [
+                {
+                    name: 'Main Pie',
+                    type: 'pie',
+                    radius: '50%',
+                    data: mainPieData,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        myChart.setOption(option);
+
+        // 鼠标事件
+        myChart.on('mousemove', function (params) {
+            if (params.componentType === 'series' && params.seriesType === 'pie') {
+                var tooltipDiv = document.getElementById('tooltipPie');
+                tooltipDiv.style.display = 'block';
+                tooltipDiv.style.left = params.event.event.pageX + 10 + 'px';
+                tooltipDiv.style.top = params.event.event.pageY + 10 + 'px';
+            }
+        });
+
+        myChart.on('mouseout', function (params) {
+            var tooltipDiv = document.getElementById('tooltipPie');
+            tooltipDiv.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
