@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ECharts Interactive Pie Chart</title>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.0.0/dist/echarts.min.js"></script>
+    <style>
+        .map1{
+            float: left;
+            position: absolute;
+            left:700px;
+        }
+        .map2{
+            position: relative;
+            width: 800px;
+            height: 600px;
+        }
+        .map3{
+            float: left;
+            position:absolute;
+            left: 900px;
+        }
+        #main1{
+            width: 800px;
+            height: 500px;
+        }
+        #sub{
+            float: left;
+            position:relative;
+            left: 400px;
+            width: 400px;
+            height: 200px;
+        }
+        #main3{
+            float: left;
+            position: absolute;
+            top:100px;
+            left: -700px;
+            width: 1500PX;
+            height: 600px;
+        }
+        #tooltipPie{
+            display: none; 
+            position: absolute;
+            width: 400px;
+            height: 400px;
+        }
+        #main2{
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body style="width: 100%;">'
+    <div class="map1">
+        <div id="main1"></div>
+        <div id="sub""></div>
+    </div>
+    <div class="map2">
+        <div id="main2"></div>
+        <div id="tooltipPie"></div>
+    </div>
+    <div class="map3">
+        <div id="main3"></div>
+    </div>
+    <script>
+        var mainChart = echarts.init(document.getElementById('main1'));
+        var mainData = [
+            {value: 2988, name: '0~5分'},
+            {value: 11670, name: '5~7分'},
+            {value: 10979, name: '7~9分'},
+            {value: 331, name: '9~10分'}
+        ];
+        var subData = {
+            '0~5分': [
+                {value: 951, name: '剧情'},
+                {value: 1515, name: '喜剧'},
+                {value: 2060, name: '爱情'},
+                {value: 2749, name: '动作'},
+                {value: 3538, name: '惊悚'}
+            ],
+            '5~7分': [
+                {value: 6100, name: '剧情'},
+                {value: 9171, name: '喜剧'},
+                {value: 11373, name: '爱情'},
+                {value: 13511, name: '动作'},
+                {value: 15754, name: '惊悚'}
+            ],
+            '7~9分': [
+                {value: 7477, name: '剧情'},
+                {value: 10186, name: '喜剧'},
+                {value: 12362, name: '爱情'},
+                {value: 13503, name: '动作'},
+                {value: 14582, name: '惊悚'}
+            ],
+            '9~10分': [
+                {value: 129, name: '剧情'},
+                {value: 203, name: '喜剧'},
+                {value: 235, name: '爱情'},
+                {value: 244, name: '动作'},
+                {value: 251, name: '惊悚'}
+            ]
+        };
+
+        // 配置主饼图
+        var mainOption = {
+            title: {
+                left: 'center',
+                top: '5%',
+                textStyle: {
+                    //color: '#fff',
+                    fontSize: 24,
+                    fontWeight: 'bold'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: '70%',
+                top: 'center',
+                textStyle: {
+                    //color: '#fff',
+                    fontSize: 18
+                },
+                data: ['0~5分', '5~7分', '7~9分', '9~10分']
+            },
+            series: [
+                {
+                    name: '评分分布',
+                    type: 'pie',
+                    radius: ['30%', '50%'],
+                    center: ['50%', '60%'],
+                    data: mainData,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    },
+                    label: {
+                        show: true,
+                        formatter: '{b} : {c} ({d}%)',
+                        fontSize: 16
+                    }
+                }
+            ]
+        };
+
+        // 在主饼图上添加事件监听器
+        mainChart.on('mouseover', function (params) {
+            if (subData.hasOwnProperty(params.name)) {
+                showSubChart(subData[params.name]);
+            }
+        });
+
+        // 初始化子饼图实例
+        var subChart = echarts.init(document.getElementById('sub'));
+
+        // 函数：显示子饼图
+        function showSubChart(data) {
+            subChart.setOption({
+                title: {
+                    left: 'center',
+                    top: '5%',
+                    textStyle: {
+                        color: '#fff',
+                        fontSize: 20,
+                        fontWeight: 'bold'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                series: [
+                    {
+                        name: '子评分分布',
+                        type: 'pie',
+                        radius: ['30%', '50%'],
+                        center: ['70%', '30%'],
+                        data: data,
+                        label: {
+                            show: true,
+                            formatter: '{b} : {c} ({d}%)',
+                            fontSize: 14
+                        }
+                    }
+                ]
+            });
+            document.getElementById('sub').style.display = 'block';
+            subChart.resize();
+        }
+
+        mainChart.setOption(mainOption);
+    </script>
+    <script type="text/javascript">
+        // 基础饼图数据
+        var mainPieData = [
+            {value: 2988, name: '0~5分'},
+            {value: 11670, name: '5~7分'},
+            {value: 10979, name: '7~9分'},
+            {value: 331, name: '9~10分'}
+        ];
+
+        // 另一个饼图数据
+        var subPieData = {
+            '0~5分': [
+                {value: 951, name: '剧情'},
+                {value: 1515, name: '喜剧'},
+                {value: 2060, name: '爱情'},
+                {value: 2749, name: '动作'},
+                {value: 3538, name: '惊悚'}
+            ],
+            '5~7分': [
+                {value: 6100, name: '剧情'},
+                {value: 9171, name: '喜剧'},
+                {value: 11373, name: '爱情'},
+                {value: 13511, name: '动作'},
+                {value: 15754, name: '惊悚'}
+            ],
+            '7~9分': [
+                {value: 7477, name: '剧情'},
+                {value: 10186, name: '喜剧'},
+                {value: 12362, name: '爱情'},
+                {value: 13503, name: '动作'},
+                {value: 14582, name: '惊悚'}
+            ],
+            '9~10分': [
+                {value: 129, name: '剧情'},
+                {value: 203, name: '喜剧'},
+                {value: 235, name: '爱情'},
+                {value: 244, name: '动作'},
+                {value: 251, name: '惊悚'}
+            ]
+        };
+
+        var myChart = echarts.init(document.getElementById('main2'));
+        var tooltipPie = echarts.init(document.getElementById('tooltipPie'));
+
+        var option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: function(params) {
+                    // 根据悬停的扇区显示对应的饼图
+                    var subData = subPieData[params.name];
+                    if (subData) {
+                        tooltipPie.setOption({
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'inner'
+                                }
+                            },
+                            emphasis: {
+                                show: true
+                            },
+                            series: [{
+                                type: 'pie',
+                                radius: '50%',
+                                data: subData
+                            }]
+                        });
+                    }
+                    return params.name + ': ' + params.value;
+                }
+            },
+            series: [{
+                name: 'Main Pie',
+                type: 'pie',
+                radius: '50%',
+                data: mainPieData,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+
+        myChart.setOption(option);
+
+        // 鼠标事件
+        myChart.on('mousemove', function(params) {
+            if (params.componentType === 'series' && params.seriesType === 'pie') {
+                var tooltipDiv = document.getElementById('tooltipPie');
+                tooltipDiv.style.display = 'block';
+                tooltipDiv.style.left = params.event.event.pageX + 10 + 'px';
+                tooltipDiv.style.top = params.event.event.pageY + 10 + 'px';
+            }
+        });
+
+        myChart.on('mouseout', function(params) {
+            var tooltipDiv = document.getElementById('tooltipPie');
+            tooltipDiv.style.display = 'none';
+        });
+    </script>
+    <script type="text/javascript">
+        var chartDom = document.getElementById('main3');
+        var myChart = echarts.init(chartDom);
+        var option;
+    
+        option = {
+            title: {
+                //text: '评分范围与电影类型分布',
+                left: 'center',
+                top: 20,
+                textStyle: {
+                    color: '#fff',
+                    fontSize: 24
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove',
+                formatter: function (params) {
+                    if (params.dataType === 'node') {
+                        return params.data.name;
+                    } else {
+                        return `${params.data.source} -> ${params.data.target}: ${params.data.value}`;
+                    }
+                }
+            },
+            legend: {
+                data: ['评分范围', '电影类型'],
+                top: 60,
+                left: 'center',
+                textStyle: {
+                    //color: '#fff',
+                    fontSize: 16
+                }
+            },
+            series: {
+                type: 'sankey',
+                layout: 'vertical',
+                emphasis: {
+                    focus: 'adjacency',
+                    itemStyle: {
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    },
+                    lineStyle: {
+                        opacity: 0.7
+                    }
+                },
+                data: [
+                { name: '0~5分', itemStyle: { color: '#FF6347' } },
+                { name: '5~7分', itemStyle: { color: '#FFD700' } },
+                { name: '7~9分', itemStyle: { color: '#ADFF2F' } },
+                { name: '9~10分', itemStyle: { color: '#7CFC00' } },
+                { name: '剧情', itemStyle: { color: '#1E90FF' } },
+                { name: '喜剧', itemStyle: { color: '#FF69B4' } },
+                { name: '爱情', itemStyle: { color: '#FF1493' } },
+                { name: '动作', itemStyle: { color: '#8A2BE2' } },
+                { name: '惊悚', itemStyle: { color: '#DC143C' } },
+                { name: '传记', itemStyle: { color: '#40BEB6' } },
+                { name: '历史', itemStyle: { color: '#6D6C57' } }
+            ],
+            links: [
+                { source: '0~5分', target: '剧情', value: 951 },
+                { source: '0~5分', target: '喜剧', value: 1515 },
+                { source: '0~5分', target: '爱情', value: 2060 },
+                { source: '0~5分', target: '动作', value: 2749 },
+                { source: '0~5分', target: '惊悚', value: 3538 },
+                { source: '0~5分', target: '传记', value: 45 },
+                { source: '5~7分', target: '传记', value: 1060 },
+                { source: '7~9分', target: '传记', value: 2220 },
+                { source: '9~10分', target: '传记', value: 50 },
+                { source: '5~7分', target: '剧情', value: 6100 },
+                { source: '5~7分', target: '喜剧', value: 9171 },
+                { source: '5~7分', target: '爱情', value: 11373 },
+                { source: '5~7分', target: '动作', value: 13511 },
+                { source: '5~7分', target: '惊悚', value: 15754 },
+                { source: '7~9分', target: '剧情', value: 7477 },
+                { source: '7~9分', target: '喜剧', value: 10186 },
+                { source: '7~9分', target: '爱情', value: 12362 },
+                { source: '7~9分', target: '动作', value: 13503 },
+                { source: '7~9分', target: '惊悚', value: 14582 },
+                { source: '9~10分', target: '剧情', value: 129 },
+                { source: '9~10分', target: '喜剧', value: 203 },
+                { source: '9~10分', target: '爱情', value: 235 },
+                { source: '9~10分', target: '动作', value: 244 },
+                { source: '9~10分', target: '惊悚', value: 251 },
+                { source: '0~5分', target: '动画', value: 530 },
+                { source: '5~7分', target: '动画', value: 2615 },
+                { source: '7~9分', target: '动画', value: 5845 },
+                { source: '9~10分', target: '动画', value: 330 },
+                { source: '0~5分', target: '历史', value: 135 },
+                { source: '5~7分', target: '历史', value: 1015 },
+                { source: '7~9分', target: '历史', value: 2300 },
+                { source: '9~10分', target: '历史', value: 50 },
+            ],
+                lineStyle: {
+                    color: 'source',
+                    curveness: 0.5,
+                    opacity: 0.4
+                },
+                itemStyle: {
+                    borderWidth: 1,
+                    borderColor: '#aaa'
+                },
+                label: {
+                    fontSize: 14,
+                    //color: '#fff'
+                }
+            }
+        };
+    
+        myChart.setOption(option);
+        window.addEventListener('resize', myChart.resize);
+    </script>
+</body>
+</html>
