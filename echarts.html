@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ECHARTS</title>
+    <script src="echarts.js"></script>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 两列布局 */
+            gap: 20px; /* 图表之间的间距 */
+            height: 100vh; /* 使容器高度占满整个视口 */
+        }
+
+        .left-chart-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            grid-column: 1; /* 左边的第一列 */
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 33%; /* 使右边的每个图表占右边容器高度的一半 */
+        }
+
+        .right-charts {
+            display: flex; 
+            flex-direction: column;
+            gap: 20px;
+            grid-column: 2; /* 右边的第二列 */
+        }
+        #info-container {
+            width: 100%;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-chart-container">
+            <div id="chart1" class="chart-container"></div>
+        </div>
+        <div class="right-charts">
+            <div id="info-container"></div>
+            <div id="chart2" class="chart-container"></div>
+            <div id="chart3-container">
+                <div id="chart3" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function () {
+
+            var infoContainer = document.getElementById('info-container');
+
+            //平均分折线图
+            var chart1 = echarts.init(document.getElementById('chart1'));
+            var option1;
+            option1 = {
+                title: {
+                    text: 'Average Rating'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['1291561', '1291852', '1291863', '1292052', '1292212']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019'],
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '1291561',
+                        type: 'line',
+                        data: [4.60, 4.00, 4.22, 4.40, 4.20, 5.00, 4.53, 4.38, 4.51, 4.64]
+                    },
+                    {
+                        name: '1291852',
+                        type: 'line',
+                        data: [4.50, 4.46, 4.15, 3.88, 4.40, 4.20, 4.00, 4.00, 4.30, 4.43]
+                    },
+                    {
+                        name: '1291863',
+                        type: 'line',
+                        data: [3.81, 3.78, 3.82, 3.87, 4.04, 3.50, 4.00, 3.79, 4.00, 4.18]
+                    },
+                    {
+                        name: '1292052',
+                        type: 'line',
+                        data: [4.56, 3.00, 5.00, 4.75, 2.75, 4.33, 4.91, 4.75, 4.69, 4.76]
+                    },
+                    {
+                        name: '1292212',
+                        type: 'line',
+                        data: [3.81, 3.80, 3.84, 3.67, 2.67, 4.00, 3.00, 3.85, 3.00, 3.91]
+                    }
+                ]
+            };
+            chart1.setOption(option1);
+
+            //评分占比变化折线图
+            var chart2 = echarts.init(document.getElementById('chart2'));
+
+            var option2;
+            option2 = {
+                title: {
+                    text: 'Rating Percentage'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['1291561', '1291852', '1291863', '1292052', '1292212']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'],
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '1291561',
+                        type: 'line',
+                        data: [0.0299, 0.0419, 0.0539, 0.0299, 0.0299, 0.0180, 0.1018, 0.2395, 0.4551]
+                    },
+                    {
+                        name: '1291852',
+                        type: 'line',
+                        data: [0.1287, 0.2281, 0.2807, 0.1520, 0.0585, 0.0292, 0.0292, 0.0351, 0.0585]
+                    },
+                    {
+                        name: '1291863',
+                        type: 'line',
+                        data: [0.1627, 0.1928, 0.1325, 0.0904, 0.1446, 0.0602, 0.0301, 0.1446, 0.0422]
+                    },
+                    {
+                        name: '1292052',
+                        type: 'line',
+                        data: [0.0506, 0.0169, 0.0562, 0.0225, 0.0225, 0.0169, 0.1236, 0.3820, 0.3090]
+                    },
+                    {
+                        name: '1292212',
+                        type: 'line',
+                        data: [0.2336, 0.2555, 0.1825, 0.0438, 0.0219, 0.0073, 0.0073, 0.2409, 0.0073]
+                    }
+                ]
+            };
+
+            // 使用刚指定的配置项和数据显示第二个图表。
+            chart2.setOption(option2);
+
+            var chart3 = echarts.init(document.getElementById('chart3'));
+            var option3;
+            option3 = {
+                title: {
+                    text: '点击左边图表的折线以显示饼状图',
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                        name: 'Access From',
+                        type: 'pie',
+                        radius: '50%',
+                        data: [],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            chart3.setOption(option3);
+
+            // 监听Chart1的点击事件
+            chart1.on('click', function (params) {
+                // 获取点击的折线名称
+                var clickedLine = params.seriesName;
+
+                // 根据点击的折线设置相应的饼状图数据和显示状态
+                if (clickedLine === '1291561') {
+                    showPieChart([0.0299, 0.0419, 0.0539, 0.0299, 0.0299, 0.0180, 0.1018, 0.2395, 0.4551]);
+                    updateInfo('这是1291561的相关信息');
+                } else if (clickedLine === '1291852') {
+                    showPieChart([0.1287, 0.2281, 0.2807, 0.1520, 0.0585, 0.0292, 0.0292, 0.0351, 0.0585]);
+                    updateInfo('这是1291852的相关信息');
+                } else if (clickedLine === '1291863') {
+                    showPieChart([0.1627, 0.1928, 0.1325, 0.0904, 0.1446, 0.0602, 0.0301, 0.1446, 0.0422]);
+                    updateInfo('这是1291863的相关信息');
+                } else if (clickedLine === '1292052') {
+                    showPieChart([0.0506, 0.0169, 0.0562, 0.0225, 0.0225, 0.0169, 0.1236, 0.3820, 0.3090]);
+                    updateInfo('这是1292052的相关信息');
+                } else if (clickedLine === '1292212') {
+                    showPieChart([0.2336, 0.2555, 0.1825, 0.0438, 0.0219, 0.0073, 0.0073, 0.2409, 0.0073]);
+                    updateInfo('这是1292212的相关信息');
+                }
+            });
+
+            // 函数：显示饼状图，并设置数据
+            function showPieChart(data) {
+                // 设置饼状图的数据
+                var pieOption = {
+                    title: { text: '饼状图' },
+                    series: [{
+                        type: 'pie', data: [
+                            { value: data[0], name: '2010' },
+                            { value: data[1], name: '2011' },
+                            { value: data[2], name: '2012' },
+                            { value: data[3], name: '2013' },
+                            { value: data[4], name: '2014' },
+                            { value: data[5], name: '2015' },
+                            { value: data[6], name: '2016' },
+                            { value: data[7], name: '2017' },
+                            { value: data[8], name: '2018' }
+                        ]
+                    }]
+                };
+
+                // 设置饼状图的显示状态
+                chart3.setOption(pieOption);
+                document.getElementById('chart-container').style.display = 'flex';
+            }
+
+            // 函数：更新信息容器中的文本信息
+            function updateInfo(text) {
+                infoContainer.textContent = text;
+            }
+        }
+    </script>
+</body>
+</html>
