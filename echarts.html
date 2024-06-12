@@ -1,276 +1,701 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ECHARTS</title>
-    <script src="echarts.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影评价图表</title>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
     <style>
         .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 两列布局 */
-            gap: 20px; /* 图表之间的间距 */
-            height: 100vh; /* 使容器高度占满整个视口 */
-        }
-
-        .left-chart-container {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            grid-column: 1; /* 左边的第一列 */
         }
 
-        .chart-container {
-            width: 100%;
-            height: 33%; /* 使右边的每个图表占右边容器高度的一半 */
-        }
-
-        .right-charts {
-            display: flex; 
-            flex-direction: column;
-            gap: 20px;
-            grid-column: 2; /* 右边的第二列 */
-        }
-        #info-container {
-            width: 100%;
+        .sidebar {
+            width: 100px;
             background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            padding: 10px;
         }
 
+        .tabs {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .tab {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #ccc;
+            margin-bottom: 5px;
+        }
+
+            .tab.active {
+                background-color: #aaa;
+            }
+
+        .chart {
+            flex: 1;
+            width: 100px;
+            height: 1400px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="left-chart-container">
-            <div id="chart1" class="chart-container"></div>
+        <div class="sidebar">
+            <ul class="tabs">
+                <li class="tab active" data-chart="chart1">千与千寻</li>
+                <li class="tab" data-chart="chart2">弗里达</li>
+                <li class="tab" data-chart="chart3">追捕</li>
+                <li class="tab" data-chart="chart4">肖申克的救赎</li>
+                <li class="tab" data-chart="chart5">天使之城</li>
+            </ul>
         </div>
-        <div class="right-charts">
-            <div id="info-container"></div>
-            <div id="chart2" class="chart-container"></div>
-            <div id="chart3-container">
-                <div id="chart3" class="chart-container"></div>
-            </div>
-        </div>
+        <div class="chart" id="chart-container1"></div>
+        <div class="chart" id="chart-container2"></div>
     </div>
 
     <script>
-        window.onload = function () {
+        const tabs = document.querySelectorAll('.tab');
+        const chartContainer1 = document.getElementById('chart-container1');
+        const chartContainer2 = document.getElementById('chart-container2');
+        let chart1 = null;
+        let chart2 = null;
+        let option1 = null;
+        let option2 = null;
 
-            var infoContainer = document.getElementById('info-container');
+        // 初始化第一个选项卡的图表
+        renderChart('chart1');
 
-            //平均分折线图
-            var chart1 = echarts.init(document.getElementById('chart1'));
-            var option1;
-            option1 = {
-                title: {
-                    text: 'Average Rating'
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    data: ['千与千寻', '弗里达', '追捕', '肖申克的救赎', '天使之城']
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                toolbox: {
-                    feature: {
-                        saveAsImage: {}
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019'],
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        name: '千与千寻',
-                        type: 'line',
-                        data: [4.60, 4.00, 4.22, 4.40, 4.20, 5.00, 4.53, 4.38, 4.51, 4.64]
-                    },
-                    {
-                        name: '弗里达',
-                        type: 'line',
-                        data: [4.50, 4.46, 4.15, 3.88, 4.40, 4.20, 4.00, 4.00, 4.30, 4.43]
-                    },
-                    {
-                        name: '追捕',
-                        type: 'line',
-                        data: [3.81, 3.78, 3.82, 3.87, 4.04, 3.50, 4.00, 3.79, 4.00, 4.18]
-                    },
-                    {
-                        name: '肖申克的救赎',
-                        type: 'line',
-                        data: [4.56, 3.00, 5.00, 4.75, 2.75, 4.33, 4.91, 4.75, 4.69, 4.76]
-                    },
-                    {
-                        name: '天使之城',
-                        type: 'line',
-                        data: [3.81, 3.80, 3.84, 3.67, 2.67, 4.00, 3.00, 3.85, 3.00, 3.91]
-                    }
-                ]
-            };
-            chart1.setOption(option1);
-
-            //评分占比变化折线图
-            var chart2 = echarts.init(document.getElementById('chart2'));
-
-            var option2;
-            option2 = {
-                title: {
-                    text: 'Rating Percentage'
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    data: ['千与千寻', '弗里达', '追捕', '肖申克的救赎', '天使之城']
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                toolbox: {
-                    feature: {
-                        saveAsImage: {}
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'],
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        name: '千与千寻',
-                        type: 'line',
-                        data: [0.0299, 0.0419, 0.0539, 0.0299, 0.0299, 0.0180, 0.1018, 0.2395, 0.4551]
-                    },
-                    {
-                        name: '弗里达',
-                        type: 'line',
-                        data: [0.1287, 0.2281, 0.2807, 0.1520, 0.0585, 0.0292, 0.0292, 0.0351, 0.0585]
-                    },
-                    {
-                        name: '追捕',
-                        type: 'line',
-                        data: [0.1627, 0.1928, 0.1325, 0.0904, 0.1446, 0.0602, 0.0301, 0.1446, 0.0422]
-                    },
-                    {
-                        name: '肖申克的救赎',
-                        type: 'line',
-                        data: [0.0506, 0.0169, 0.0562, 0.0225, 0.0225, 0.0169, 0.1236, 0.3820, 0.3090]
-                    },
-                    {
-                        name: '天使之城',
-                        type: 'line',
-                        data: [0.2336, 0.2555, 0.1825, 0.0438, 0.0219, 0.0073, 0.0073, 0.2409, 0.0073]
-                    }
-                ]
-            };
-
-            // 使用刚指定的配置项和数据显示第二个图表。
-            chart2.setOption(option2);
-
-            var chart3 = echarts.init(document.getElementById('chart3'));
-            var option3;
-            option3 = {
-                title: {
-                    text: '点击左边图表的折线以显示饼状图',
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left'
-                },
-                series: [
-                    {
-                        name: 'Access From',
-                        type: 'pie',
-                        radius: '50%',
-                        data: [],
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            };
-            chart3.setOption(option3);
-
-            // 监听Chart1的点击事件
-            chart1.on('click', function (params) {
-                // 获取点击的折线名称
-                var clickedLine = params.seriesName;
-
-                // 根据点击的折线设置相应的饼状图数据和显示状态
-                if (clickedLine === '千与千寻') {
-                    showPieChart([0.0299, 0.0419, 0.0539, 0.0299, 0.0299, 0.0180, 0.1018, 0.2395, 0.4551]);
-                    updateInfo('这是千与千寻的相关信息');
-                } else if (clickedLine === '弗里达') {
-                    showPieChart([0.1287, 0.2281, 0.2807, 0.1520, 0.0585, 0.0292, 0.0292, 0.0351, 0.0585]);
-                    updateInfo('这是弗里达的相关信息');
-                } else if (clickedLine === '追捕') {
-                    showPieChart([0.1627, 0.1928, 0.1325, 0.0904, 0.1446, 0.0602, 0.0301, 0.1446, 0.0422]);
-                    updateInfo('这是追捕的相关信息');
-                } else if (clickedLine === '肖申克的救赎') {
-                    showPieChart([0.0506, 0.0169, 0.0562, 0.0225, 0.0225, 0.0169, 0.1236, 0.3820, 0.3090]);
-                    updateInfo('这是肖申克的救赎的相关信息');
-                } else if (clickedLine === '天使之城') {
-                    showPieChart([0.2336, 0.2555, 0.1825, 0.0438, 0.0219, 0.0073, 0.0073, 0.2409, 0.0073]);
-                    updateInfo('这是天使之城的相关信息');
-                }
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 切换选项卡的样式
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // 根据选项卡呈现不同的图表
+                const chartId = tab.dataset.chart;
+                renderChart(chartId);
             });
+        });
 
-            // 函数：显示饼状图，并设置数据
-            function showPieChart(data) {
-                // 设置饼状图的数据
-                var pieOption = {
-                    title: { text: '饼状图' },
-                    series: [{
-                        type: 'pie', data: [
-                            { value: data[0], name: '2010' },
-                            { value: data[1], name: '2011' },
-                            { value: data[2], name: '2012' },
-                            { value: data[3], name: '2013' },
-                            { value: data[4], name: '2014' },
-                            { value: data[5], name: '2015' },
-                            { value: data[6], name: '2016' },
-                            { value: data[7], name: '2017' },
-                            { value: data[8], name: '2018' }
+        function renderChart(chartId) {
+            if (chart1 && option1 && chart2 && option2) {
+                chart1.setOption(option1);
+                chart2.setOption(option2);
+            } else {
+                // 初始化echarts实例
+                chart1 = echarts.init(chartContainer1);
+                chart2 = echarts.init(chartContainer2);
+            }
+            switch (chartId) {
+                case 'chart1':
+                    option1 = {
+                        title: {
+                            text: '年度均分随评价数量分布柱状图'
+                        },
+                        tooltip: {},
+                        visualMap: {
+                            max: 5,
+                            min: 4,
+                            inRange: {
+                                color: [
+                                    '#313695',
+                                    '#4575b4',
+                                    '#74add1',
+                                    '#abd9e9',
+                                    '#e0f3f8',
+                                    '#ffffbf',
+                                    '#fee090',
+                                    '#fdae61',
+                                    '#f46d43',
+                                    '#d73027',
+                                    '#a50026'
+                                ]
+                            }
+                        },
+                        //x轴显示评价数量
+                        xAxis3D: {
+                            name: '评价数量',
+                            type: 'value'
+                        },
+                        //y轴显示评价年份
+                        yAxis3D: {
+                            name: '年份',
+                            type: 'category',
+                            data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
+                        },
+                        //z轴显示评分高低
+                        zAxis3D: {
+                            name: '分值',
+                            type: 'value',
+                            min: 3.5,
+                        },
+                        grid3D: {
+                            boxWidth: 60,
+                            boxDepth: 80,
+                            boxHeight: 100,
+                            viewControl: {
+                                // 使用正交投影
+                                projection: 'orthographic'
+                            },
+                            light: {
+                                main: {
+                                    intensity: 1.2,
+                                    shadow: true
+                                },
+                                ambient: {
+                                    intensity: 0.3
+                                }
+                            }
+                        },
+
+                        series: [{
+                            type: 'bar3D',
+                            barsize: 50,
+                            data: [
+                                [5, 0, 4.60],
+                                [7, 1, 4.00],
+                                [9, 2, 4.22],
+                                [5, 3, 4.40],
+                                [5, 4, 4.20],
+                                [3, 5, 5.00],
+                                [17, 6, 4.53],
+                                [40, 7, 4.38],
+                                [76, 8, 4.51],
+                            ],
+                            itemStyle: {
+                                color: 'red', // 柱子颜色设置为红色
+                                borderWidth: 1, // 边缘线条宽度
+                                borderColor: 'black' // 边缘线条颜色
+                            }
+                        }]
+                    };
+
+                    option2 = {
+                        title: {
+                            text: '各年份评分占比',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
+                        },
+                        series: [
+                            {
+                                type: 'pie',
+                                radius: '50%',
+                                data: [
+                                    { value: 5, name: '2010' },
+                                    { value: 7, name: '2011' },
+                                    { value: 9, name: '2012' },
+                                    { value: 5, name: '2013' },
+                                    { value: 5, name: '2014' },
+                                    { value: 3, name: '2015' },
+                                    { value: 17, name: '2016' },
+                                    { value: 40, name: '2017' },
+                                    { value: 76, name: '2018' }
+                                ],
+                                emphasis: {
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
                         ]
-                    }]
-                };
+                    };
+                    break;
+                case 'chart2':
+                    option1 = {
+                        title: {
+                            text: '年度均分随评价数量分布柱状图'
+                        },
+                        tooltip: {},
+                        visualMap: {
+                            max: 4.50,
+                            min: 3.88,
+                            inRange: {
+                                color: [
+                                    '#313695',
+                                    '#4575b4',
+                                    '#74add1',
+                                    '#abd9e9',
+                                    '#e0f3f8',
+                                    '#ffffbf',
+                                    '#fee090',
+                                    '#fdae61',
+                                    '#f46d43',
+                                    '#d73027',
+                                    '#a50026'
+                                ]
+                            }
+                        },
+                        //x轴显示评价数量
+                        xAxis3D: {
+                            name: '评价数量',
+                            type: 'value'
+                        },
+                        //y轴显示评价年份
+                        yAxis3D: {
+                            name: '年份',
+                            type: 'category',
+                            data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
+                        },
+                        //z轴显示评分高低
+                        zAxis3D: {
+                            name: '分值',
+                            type: 'value',
+                            min: 3.5,
+                        },
+                        grid3D: {
+                            boxWidth: 60,
+                            boxDepth: 80,
+                            boxHeight: 100,
+                            viewControl: {
+                                // 使用正交投影
+                                projection: 'orthographic'
+                            },
+                            light: {
+                                main: {
+                                    intensity: 1.2,
+                                    shadow: true
+                                },
+                                ambient: {
+                                    intensity: 0.3
+                                }
+                            }
+                        },
 
-                // 设置饼状图的显示状态
-                chart3.setOption(pieOption);
-                document.getElementById('chart-container').style.display = 'flex';
-            }
+                        series: [{
+                            type: 'bar3D',
+                            barsize: 50,
+                            data: [
+                                [22, 0, 4.50],
+                                [39, 1, 4.46],
+                                [48, 2, 4.15],
+                                [26, 3, 3.88],
+                                [10, 4, 4.40],
+                                [5, 5, 4.20],
+                                [5, 6, 4.00],
+                                [6, 7, 4.00],
+                                [10, 8, 4.30],
+                            ],
+                            itemStyle: {
+                                color: 'red', // 柱子颜色设置为红色
+                                borderWidth: 1, // 边缘线条宽度
+                                borderColor: 'black' // 边缘线条颜色
+                            }
+                        }]
+                    };
+                    option2 = {
+                        title: {
+                            text: '各年份评分占比',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
+                        },
+                        series: [
+                            {
+                                type: 'pie',
+                                radius: '50%',
+                                data: [
+                                    { value: 22, name: '2010' },
+                                    { value: 39, name: '2011' },
+                                    { value: 48, name: '2012' },
+                                    { value: 26, name: '2013' },
+                                    { value: 10, name: '2014' },
+                                    { value: 5, name: '2015' },
+                                    { value: 5, name: '2016' },
+                                    { value: 6, name: '2017' },
+                                    { value: 10, name: '2018' }
+                                ],
+                                emphasis: {
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    };
 
-            // 函数：更新信息容器中的文本信息
-            function updateInfo(text) {
-                infoContainer.textContent = text;
+                    break;
+                case 'chart3':
+                    option1 = {
+                        title: {
+                            text: '年度均分随评价数量分布柱状图'
+                        },
+                        tooltip: {},
+                        visualMap: {
+                            max: 4.04,
+                            min: 3.78,
+                            inRange: {
+                                color: [
+                                    '#313695',
+                                    '#4575b4',
+                                    '#74add1',
+                                    '#abd9e9',
+                                    '#e0f3f8',
+                                    '#ffffbf',
+                                    '#fee090',
+                                    '#fdae61',
+                                    '#f46d43',
+                                    '#d73027',
+                                    '#a50026'
+                                ]
+                            }
+                        },
+                        //x轴显示评价数量
+                        xAxis3D: {
+                            name: '评价数量',
+                            type: 'value'
+                        },
+                        //y轴显示评价年份
+                        yAxis3D: {
+                            name: '年份',
+                            type: 'category',
+                            data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
+                        },
+                        //z轴显示评分高低
+                        zAxis3D: {
+                            name: '分值',
+                            type: 'value',
+                            min: 3.5,
+                        },
+                        grid3D: {
+                            boxWidth: 60,
+                            boxDepth: 80,
+                            boxHeight: 100,
+                            viewControl: {
+                                // 使用正交投影
+                                projection: 'orthographic'
+                            },
+                            light: {
+                                main: {
+                                    intensity: 1.2,
+                                    shadow: true
+                                },
+                                ambient: {
+                                    intensity: 0.3
+                                }
+                            }
+                        },
+
+                        series: [{
+                            type: 'bar3D',
+                            barsize: 50,
+                            data: [
+                                [27, 0, 3.81],
+                                [32, 1, 3.78],
+                                [22, 2, 3.82],
+                                [15, 3, 3.87],
+                                [24, 4, 4.04],
+                                [10, 5, 3.50],
+                                [5, 6, 4.00],
+                                [24, 7, 3.79],
+                                [7, 8, 4.00]
+                            ],
+                            itemStyle: {
+                                color: 'red', // 柱子颜色设置为红色
+                                borderWidth: 1, // 边缘线条宽度
+                                borderColor: 'black' // 边缘线条颜色
+                            }
+                        }]
+                    };
+
+                    option2 = {
+                        title: {
+                            text: '各年份评分占比',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
+                        },
+                        series: [
+                            {
+                                type: 'pie',
+                                radius: '50%',
+                                data: [
+                                    { value: 27, name: '2010' },
+                                    { value: 32, name: '2011' },
+                                    { value: 22, name: '2012' },
+                                    { value: 15, name: '2013' },
+                                    { value: 24, name: '2014' },
+                                    { value: 10, name: '2015' },
+                                    { value: 5, name: '2016' },
+                                    { value: 24, name: '2017' },
+                                    { value: 7, name: '2018' }
+                                ],
+                                emphasis: {
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    break;
+                case 'chart4':
+                    option1 = {
+                        title: {
+                            text: '年度均分随评价数量分布柱状图'
+                        },
+                        tooltip: {},
+                        visualMap: {
+                            max: 5,
+                            min: 2.75,
+                            inRange: {
+                                color: [
+                                    '#313695',
+                                    '#4575b4',
+                                    '#74add1',
+                                    '#abd9e9',
+                                    '#e0f3f8',
+                                    '#ffffbf',
+                                    '#fee090',
+                                    '#fdae61',
+                                    '#f46d43',
+                                    '#d73027',
+                                    '#a50026'
+                                ]
+                            }
+                        },
+                        //x轴显示评价数量
+                        xAxis3D: {
+                            name: '评价数量',
+                            type: 'value'
+                        },
+                        //y轴显示评价年份
+                        yAxis3D: {
+                            name: '年份',
+                            type: 'category',
+                            data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
+                        },
+                        //z轴显示评分高低
+                        zAxis3D: {
+                            name: '分值',
+                            type: 'value',
+                            min: 2.5,
+                        },
+                        grid3D: {
+                            boxWidth: 60,
+                            boxDepth: 80,
+                            boxHeight: 100,
+                            viewControl: {
+                                // 使用正交投影
+                                projection: 'orthographic'
+                            },
+                            light: {
+                                main: {
+                                    intensity: 1.2,
+                                    shadow: true
+                                },
+                                ambient: {
+                                    intensity: 0.3
+                                }
+                            }
+                        },
+
+                        series: [{
+                            type: 'bar3D',
+                            barsize: 50,
+                            data: [
+                                [9, 0, 4.56],
+                                [3, 1, 3.00],
+                                [10, 2, 5.00],
+                                [4, 3, 4.75],
+                                [4, 4, 2.75],
+                                [3, 5, 4.33],
+                                [22, 6, 4.91],
+                                [68, 7, 4.75],
+                                [55, 8, 4.69],
+                            ],
+                            itemStyle: {
+                                color: 'red', // 柱子颜色设置为红色
+                                borderWidth: 1, // 边缘线条宽度
+                                borderColor: 'black' // 边缘线条颜色
+                            }
+                        }]
+                    };
+
+                    option2 = {
+                        title: {
+                            text: '各年份评分占比',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
+                        },
+                        series: [
+                            {
+                                type: 'pie',
+                                radius: '50%',
+                                data: [
+                                    { value: 9, name: '2010' },
+                                    { value: 3, name: '2011' },
+                                    { value: 10, name: '2012' },
+                                    { value: 4, name: '2013' },
+                                    { value: 4, name: '2014' },
+                                    { value: 3, name: '2015' },
+                                    { value: 22, name: '2016' },
+                                    { value: 68, name: '2017' },
+                                    { value: 55, name: '2018' }
+                                ],
+                                emphasis: {
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    break;
+                case 'chart5':
+                    option1 = {
+                        title: {
+                            text: '年度均分随评价数量分布柱状图'
+                        },
+                        tooltip: {},
+                        visualMap: {
+                            max: 4.00,
+                            min: 2.67,
+                            inRange: {
+                                color: [
+                                    '#313695',
+                                    '#4575b4',
+                                    '#74add1',
+                                    '#abd9e9',
+                                    '#e0f3f8',
+                                    '#ffffbf',
+                                    '#fee090',
+                                    '#fdae61',
+                                    '#f46d43',
+                                    '#d73027',
+                                    '#a50026'
+                                ]
+                            }
+                        },
+                        //x轴显示评价数量
+                        xAxis3D: {
+                            name: '评价数量',
+                            type: 'value'
+                        },
+                        //y轴显示评价年份
+                        yAxis3D: {
+                            name: '年份',
+                            type: 'category',
+                            data: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
+                        },
+                        //z轴显示评分高低
+                        zAxis3D: {
+                            name: '分值',
+                            type: 'value',
+                            min: 2.5,
+                        },
+                        grid3D: {
+                            boxWidth: 60,
+                            boxDepth: 80,
+                            boxHeight: 100,
+                            viewControl: {
+                                // 使用正交投影
+                                projection: 'orthographic'
+                            },
+                            light: {
+                                main: {
+                                    intensity: 1.2,
+                                    shadow: true
+                                },
+                                ambient: {
+                                    intensity: 0.3
+                                }
+                            }
+                        },
+
+                        series: [{
+                            type: 'bar3D',
+                            barsize: 50,
+                            data: [
+                                [32, 0, 3.81],
+                                [35, 1, 3.80],
+                                [25, 2, 3.84],
+                                [6, 3, 3.67],
+                                [3, 4, 2.67],
+                                [1, 5, 4.00],
+                                [1, 6, 3.00],
+                                [33, 7, 3.85],
+                                [1, 8, 3.00],
+                            ],
+                            itemStyle: {
+                                color: 'red', // 柱子颜色设置为红色
+                                borderWidth: 1, // 边缘线条宽度
+                                borderColor: 'black' // 边缘线条颜色
+                            }
+                        }]
+                    };
+
+                    option2 = {
+                        title: {
+                            text: '各年份评分占比',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
+                        },
+                        series: [
+                            {
+                                type: 'pie',
+                                radius: '50%',
+                                data: [
+                                    { value: 32, name: '2010' },
+                                    { value: 35, name: '2011' },
+                                    { value: 25, name: '2012' },
+                                    { value: 6, name: '2013' },
+                                    { value: 3, name: '2014' },
+                                    { value: 1, name: '2015' },
+                                    { value: 1, name: '2016' },
+                                    { value: 33, name: '2017' },
+                                    { value: 1, name: '2018' }
+                                ],
+                                emphasis: {
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    break;
             }
+            chart1.setOption(option1);
+            chart2.setOption(option2);
         }
     </script>
 </body>
