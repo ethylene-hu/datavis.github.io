@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ECharts Interactive Pie Chart</title>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.0.0/dist/echarts.min.js"></script>
+    <style>
+    </style>
+</head>
+<body style="background-color: #333; color: #fff;">
+    <!-- 主饼图容器 -->
+    <div id="main" style="width: 800px;height:600px; margin: auto;"></div>
+
+    <!-- 子饼图容器 -->
+    <div id="sub" style="width: 600px;height:450px; margin: auto; display:none;"></div>
+
+    <script>
+        // 初始化主饼图实例
+        var mainChart = echarts.init(document.getElementById('main'));
+
+        // 主饼图数据
+        var mainData = [
+            {value: 2988, name: '0~5分'},
+            {value: 11670, name: '5~7分'},
+            {value: 10979, name: '7~9分'},
+            {value: 331, name: '9~10分'}
+        ];
+
+        // 子饼图数据
+        var subData = {
+            '0~5分': [
+                {value: 951, name: '剧情'},
+                {value: 1515, name: '喜剧'},
+                {value: 2060, name: '爱情'},
+                {value: 2749, name: '动作'},
+                {value: 3538, name: '惊悚'}
+            ],
+            '5~7分': [
+                {value: 6100, name: '剧情'},
+                {value: 9171, name: '喜剧'},
+                {value: 11373, name: '爱情'},
+                {value: 13511, name: '动作'},
+                {value: 15754, name: '惊悚'}
+            ],
+            '7~9分': [
+                {value: 7477, name: '剧情'},
+                {value: 10186, name: '喜剧'},
+                {value: 12362, name: '爱情'},
+                {value: 13503, name: '动作'},
+                {value: 14582, name: '惊悚'}
+            ],
+            '9~10分': [
+                {value: 129, name: '剧情'},
+                {value: 203, name: '喜剧'},
+                {value: 235, name: '爱情'},
+                {value: 244, name: '动作'},
+                {value: 251, name: '惊悚'}
+            ]
+        };
+
+        // 配置主饼图
+        var mainOption = {
+            title: {
+                left: 'center',
+                top: '5%',
+                textStyle: {
+                    color: '#fff',
+                    fontSize: 24,
+                    fontWeight: 'bold'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: '70%',
+                top: 'center',
+                textStyle: {
+                    color: '#fff',
+                    fontSize: 18
+                },
+                data: ['0~5分', '5~7分', '7~9分', '9~10分']
+            },
+            series: [
+                {
+                    name: '评分分布',
+                    type: 'pie',
+                    radius: ['30%', '50%'],
+                    center: ['35%', '50%'],
+                    data: mainData,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    },
+                    label: {
+                        show: true,
+                        formatter: '{b} : {c} ({d}%)',
+                        fontSize: 16
+                    }
+                }
+            ]
+        };
+
+        // 在主饼图上添加事件监听器
+        mainChart.on('mouseover', function (params) {
+            if (subData.hasOwnProperty(params.name)) {
+                showSubChart(subData[params.name]);
+            }
+        });
+
+        // 初始化子饼图实例
+        var subChart = echarts.init(document.getElementById('sub'));
+
+        // 函数：显示子饼图
+        function showSubChart(data) {
+            subChart.setOption({
+                title: {
+                    left: 'center',
+                    top: '5%',
+                    textStyle: {
+                        color: '#fff',
+                        fontSize: 20,
+                        fontWeight: 'bold'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                series: [
+                    {
+                        name: '子评分分布',
+                        type: 'pie',
+                        radius: ['30%', '50%'],
+                        center: ['30%', '40%'],
+                        data: data,
+                        label: {
+                            show: true,
+                            formatter: '{b} : {c} ({d}%)',
+                            fontSize: 14
+                        }
+                    }
+                ]
+            });
+            document.getElementById('sub').style.display = 'block'; // 显示子饼图容器
+            subChart.resize();
+        }
+
+        // 绘制主饼图
+        mainChart.setOption(mainOption);
+    </script>
+</body>
+</html>
+

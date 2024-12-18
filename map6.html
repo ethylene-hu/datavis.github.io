@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="UTF-8">
+    <title>Vertical Sankey Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+<body style="height: 100%; margin: 0">
+<div id="main" style="height: 100%"></div>
+<script type="text/javascript">
+    var chartDom = document.getElementById('main');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    option = {
+        title: {
+            text: '评分范围与电影类型分布',
+            left: 'center',
+            top: 20,
+            textStyle: {
+                color: '#fff',
+                fontSize: 24
+            }
+        },
+        tooltip: {
+            trigger: 'item',
+            triggerOn: 'mousemove',
+            formatter: function (params) {
+                if (params.dataType === 'node') {
+                    return params.data.name;
+                } else {
+                    return `${params.data.source} -> ${params.data.target}: ${params.data.value}`;
+                }
+            }
+        },
+        legend: {
+            data: ['评分范围', '电影类型'],
+            top: 60,
+            left: 'center',
+            textStyle: {
+                color: '#fff',
+                fontSize: 16
+            }
+        },
+        series: {
+            type: 'sankey',
+            layout: 'vertical',
+            emphasis: {
+                focus: 'adjacency',
+                itemStyle: {
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                },
+                lineStyle: {
+                    opacity: 0.7
+                }
+            },
+            data: [
+                { name: '0~5分', itemStyle: { color: '#FF6347' } },
+                { name: '5~7分', itemStyle: { color: '#FFD700' } },
+                { name: '7~9分', itemStyle: { color: '#ADFF2F' } },
+                { name: '9~10分', itemStyle: { color: '#7CFC00' } },
+                { name: '剧情', itemStyle: { color: '#1E90FF' } },
+                { name: '喜剧', itemStyle: { color: '#FF69B4' } },
+                { name: '爱情', itemStyle: { color: '#FF1493' } },
+                { name: '动作', itemStyle: { color: '#8A2BE2' } },
+                { name: '惊悚', itemStyle: { color: '#DC143C' } },
+                { name: '传记', itemStyle: { color: '#40BEB6' } },
+                { name: '历史', itemStyle: { color: '#6D6C57' } }
+            ],
+            links: [
+                { source: '0~5分', target: '剧情', value: 951 },
+                { source: '0~5分', target: '喜剧', value: 1515 },
+                { source: '0~5分', target: '爱情', value: 2060 },
+                { source: '0~5分', target: '动作', value: 2749 },
+                { source: '0~5分', target: '惊悚', value: 3538 },
+                { source: '0~5分', target: '传记', value: 45 },
+                { source: '5~7分', target: '传记', value: 1060 },
+                { source: '7~9分', target: '传记', value: 2220 },
+                { source: '9~10分', target: '传记', value: 50 },
+                { source: '5~7分', target: '剧情', value: 6100 },
+                { source: '5~7分', target: '喜剧', value: 9171 },
+                { source: '5~7分', target: '爱情', value: 11373 },
+                { source: '5~7分', target: '动作', value: 13511 },
+                { source: '5~7分', target: '惊悚', value: 15754 },
+                { source: '7~9分', target: '剧情', value: 7477 },
+                { source: '7~9分', target: '喜剧', value: 10186 },
+                { source: '7~9分', target: '爱情', value: 12362 },
+                { source: '7~9分', target: '动作', value: 13503 },
+                { source: '7~9分', target: '惊悚', value: 14582 },
+                { source: '9~10分', target: '剧情', value: 129 },
+                { source: '9~10分', target: '喜剧', value: 203 },
+                { source: '9~10分', target: '爱情', value: 235 },
+                { source: '9~10分', target: '动作', value: 244 },
+                { source: '9~10分', target: '惊悚', value: 251 },
+                { source: '0~5分', target: '动画', value: 530 },
+                { source: '5~7分', target: '动画', value: 2615 },
+                { source: '7~9分', target: '动画', value: 5845 },
+                { source: '9~10分', target: '动画', value: 330 },
+                { source: '0~5分', target: '历史', value: 135 },
+                { source: '5~7分', target: '历史', value: 1015 },
+                { source: '7~9分', target: '历史', value: 2300 },
+                { source: '9~10分', target: '历史', value: 50 },
+            ],
+            lineStyle: {
+                color: 'source',
+                curveness: 0.5,
+                opacity: 0.4
+            },
+            itemStyle: {
+                borderWidth: 1,
+                borderColor: '#aaa'
+            },
+            label: {
+                fontSize: 14,
+                color: '#fff'
+            }
+        }
+    };
+
+    myChart.setOption(option);
+    window.addEventListener('resize', myChart.resize);
+</script>
+
+
+</body>
+</html>
